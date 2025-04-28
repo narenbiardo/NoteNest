@@ -12,9 +12,20 @@ namespace EnsolversChallenge.Services
             _repository = repository;
         }
 
-        public Task<Note> AddNote(Note note)
+        public async Task<Note> AddNote(Note note)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(note.Title))
+            {
+                throw new ArgumentException("Title cannot be empty");
+            }
+            else if (string.IsNullOrWhiteSpace(note.Content))
+            {
+                throw new ArgumentException("Content cannot be empty");
+            }
+            else
+            {
+                return await _repository.Add(note);
+            }  
         }
 
         public Task DeleteNote(int id)

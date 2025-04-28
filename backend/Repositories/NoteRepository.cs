@@ -23,9 +23,11 @@ namespace EnsolversChallenge.Repositories
             _context = context;
         }
 
-        public Task<Note> Add(Note note)
+        public async Task<Note> Add(Note note)
         {
-            throw new NotImplementedException();
+            _context.Notes.Add(note);
+            await _context.SaveChangesAsync();
+            return note;
         }
 
         public Task Delete(int id)

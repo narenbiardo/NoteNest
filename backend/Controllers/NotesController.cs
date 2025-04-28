@@ -1,4 +1,6 @@
-﻿using EnsolversChallenge.Services;
+﻿using System.Threading.Tasks;
+using EnsolversChallenge.Services;
+using EnsolversChallenge.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EnsolversChallenge.Controllers
@@ -12,6 +14,35 @@ namespace EnsolversChallenge.Controllers
         public NotesController(INoteService noteService)
         {
             _noteService = noteService;
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetNoteById(int id)
+        {
+            try
+            {
+                var note = await _noteService.GetNoteById(id);
+                if (note == null) return NotFound();
+                return Ok(note);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddNote([FromBody] Note note)
+        {
+            try
+            {
+                var createNote = await _noteService.AddNote(note);
+                return CreatedAtAction(nameof(GetNoteById), new { id = createNote.Id }, createNote);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("active")]
