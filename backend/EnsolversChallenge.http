@@ -1,0 +1,6 @@
+@EnsolversChallenge_HostAddress = http://localhost:5195
+
+GET {{EnsolversChallenge_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
