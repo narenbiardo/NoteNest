@@ -38,9 +38,9 @@ namespace EnsolversChallenge.Services
             return await _repository.GetActiveNotes();
         }
 
-        public Task<List<Note>> GetArchivedNotes()
+        public async Task<List<Note>> GetArchivedNotes()
         {
-            throw new NotImplementedException();
+            return await _repository.GetArchivedNotes();
         }
 
         public async Task<Note?> GetNoteById(int id)
@@ -54,7 +54,7 @@ namespace EnsolversChallenge.Services
 
             if(existingNote == null)
             {
-                throw new KeyNotFoundException($"No Note found with ID {id}");
+                throw new KeyNotFoundException($"No note found with ID {id}");
             }
             else
             {

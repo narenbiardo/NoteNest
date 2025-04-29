@@ -34,9 +34,12 @@ namespace EnsolversChallenge.Repositories
                 .ToListAsync();
         }
 
-        public Task<List<Note>> GetArchivedNotes()
+        public async Task<List<Note>> GetArchivedNotes()
         {
-            throw new NotImplementedException();
+            return await _context.Notes
+                .Where (n => n.IsArchived)
+                .OrderByDescending(n => n.CreateDate)
+                .ToListAsync();
         }
 
         public async Task<Note?> GetById(int id)

@@ -78,5 +78,19 @@ namespace EnsolversChallenge.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("archived")]
+        public async Task<IActionResult> GetArchivedNotes()
+        {
+            try
+            {
+                var notes = await _noteService.GetArchivedNotes();
+                return Ok(notes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }
