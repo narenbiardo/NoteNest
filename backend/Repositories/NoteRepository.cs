@@ -21,9 +21,14 @@ namespace EnsolversChallenge.Repositories
             return note;
         }
 
-        public Task Delete(int id)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            var note = await _context.Notes.FindAsync(id);
+            if (note != null)
+            {
+                _context.Notes.Remove(note);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<List<Note>> GetActiveNotes()

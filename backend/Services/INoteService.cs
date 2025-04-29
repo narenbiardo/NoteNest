@@ -9,7 +9,7 @@ namespace EnsolversChallenge.Services
         Task<Note?> GetNoteById(int id);
         Task<Note> AddNote(Note note);
         Task<Note> UpdateNote(int id, NoteUpdateDto dto);
-        Task DeleteNote(int id);
+        Task<bool> DeleteNote(int id);
         Task<Note?> ArchiveNote(int id);
         Task<Note?> UnarchiveNote(int id);
     }
