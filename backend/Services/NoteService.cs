@@ -63,5 +63,15 @@ namespace EnsolversChallenge.Services
                 return await _repository.Update(existingNote);
             }
         }
+
+        public async Task<Note?> ArchiveNote(int id)
+        {
+            return await _repository.UpdateArchiveStatus(id, true);
+        }
+
+        public async Task<Note?> UnarchiveNote(int id)
+        {
+            return await _repository.UpdateArchiveStatus(id, false);
+        }
     }
 }

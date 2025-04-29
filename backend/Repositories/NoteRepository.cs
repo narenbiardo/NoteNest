@@ -53,6 +53,17 @@ namespace EnsolversChallenge.Repositories
             await _context.SaveChangesAsync();
             return note;
         }
+
+        public async Task<Note?> UpdateArchiveStatus(int id, bool archiveStatus)
+        {
+            var note = await _context.Notes.FindAsync(id);
+            if (note != null)
+            {
+                note.IsArchived = archiveStatus;
+                await _context.SaveChangesAsync();
+            }
+            return note;
+        }
     }
 
 }

@@ -92,5 +92,33 @@ namespace EnsolversChallenge.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPatch("{id}/archive")]
+        public async Task<IActionResult> ArchiveNote(int id)
+        {
+            try
+            {
+                var note = await _noteService.ArchiveNote(id);
+                return note != null ? Ok(note) : NotFound();
+            }
+            catch( Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPatch("{id}/unarchive")]
+        public async Task<IActionResult> UnarchiveNote(int id)
+        {
+            try
+            {
+                var note = await _noteService.UnarchiveNote(id);
+                return note != null ? Ok(note) : NotFound();
+            }
+            catch ( Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

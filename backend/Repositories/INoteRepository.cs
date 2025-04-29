@@ -10,5 +10,6 @@ namespace EnsolversChallenge.Repositories
         Task<Note> Add(Note note);
         Task<Note> Update(Note note);
         Task Delete(int id);
+        Task<Note?> UpdateArchiveStatus(int id, bool archiveStatus);
     }
 }
