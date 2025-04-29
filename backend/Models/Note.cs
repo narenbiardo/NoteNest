@@ -40,5 +40,7 @@ namespace EnsolversChallenge.Models
 
         public bool IsArchived { get; set; } = false;
         public DateTime CreateDate { get; set; } = DateTime.Now;
+
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
     }
 }
