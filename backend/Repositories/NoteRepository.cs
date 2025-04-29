@@ -39,9 +39,9 @@ namespace EnsolversChallenge.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Note?> GetById(int id)
+        public async Task<Note?> GetById(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Notes.FirstOrDefaultAsync(n => n.Id == id);
         }
 
         public Task<Note> Update(Note note)
