@@ -2,6 +2,7 @@
 using EnsolversChallenge.Services;
 using EnsolversChallenge.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EnsolversChallenge.Controllers
 {
@@ -56,6 +57,25 @@ namespace EnsolversChallenge.Controllers
             catch(Exception ex) 
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateNote(int id, [FromBody] NoteUpdateDto dto)
+        {
+            try
+            {
+                var updated = await _noteService.UpdateNote(id, dto);
+                if (updated == null)
+                    return NotFound();
+                else
+                {
+                    return Ok(updated);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
     }

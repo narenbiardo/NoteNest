@@ -48,9 +48,20 @@ namespace EnsolversChallenge.Services
             return await _repository.GetById(id);
         }
 
-        public Task<Note> UpdateNote(Note note)
+        public async Task<Note> UpdateNote(int id, NoteUpdateDto dto)
         {
-            throw new NotImplementedException();
+            var existingNote = await _repository.GetById(id);
+
+            if(existingNote == null)
+            {
+                throw new KeyNotFoundException($"No Note found with ID {id}");
+            }
+            else
+            {
+                existingNote.Title = dto.Title;
+                existingNote.Content = dto.Content;
+                return await _repository.Update(existingNote);
+            }
         }
     }
 }

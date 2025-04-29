@@ -8,7 +8,7 @@ namespace EnsolversChallenge.Services
         Task<List<Note>> GetArchivedNotes();
         Task<Note?> GetNoteById(int id);
         Task<Note> AddNote(Note note);
-        Task<Note> UpdateNote(Note note);
+        Task<Note> UpdateNote(int id, NoteUpdateDto dto);
         Task DeleteNote(int id);
     }
 }

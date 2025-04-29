@@ -44,9 +44,11 @@ namespace EnsolversChallenge.Repositories
             return await _context.Notes.FirstOrDefaultAsync(n => n.Id == id);
         }
 
-        public Task<Note> Update(Note note)
+        public async Task<Note> Update(Note note)
         {
-            throw new NotImplementedException();
+            _context.Notes.Update(note);
+            await _context.SaveChangesAsync();
+            return note;
         }
     }
 
