@@ -48,8 +48,15 @@ namespace EnsolversChallenge.Controllers
         [HttpGet("active")]
         public async Task<IActionResult> GetActiveNotes()
         {
-            var notes = await _noteService.GetActiveNotes();
-            return Ok(notes);
+            try
+            {
+                var notes = await _noteService.GetActiveNotes();
+                return Ok(notes);
+            }
+            catch(Exception ex) 
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

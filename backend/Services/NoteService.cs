@@ -33,9 +33,9 @@ namespace EnsolversChallenge.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<Note>> GetActiveNotes()
+        public async Task<List<Note>> GetActiveNotes()
         {
-            throw new NotImplementedException();
+            return await _repository.GetActiveNotes();
         }
 
         public Task<List<Note>> GetArchivedNotes()

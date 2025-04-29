@@ -1,18 +1,9 @@
 ﻿using EnsolversChallenge.Data;
 using EnsolversChallenge.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnsolversChallenge.Repositories
 {
-    public interface INoteRepository
-    {
-        Task<List<Note>> GetActiveNotes();
-        Task<List<Note>> GetArchivedNotes();
-        Task<Note?> GetById(int id);
-        Task<Note> Add(Note note);
-        Task<Note> Update(Note note);
-        Task Delete(int id);
-    }
-
     public class NoteRepository : INoteRepository
     {
         private readonly ApplicationDbContext _context;
@@ -35,9 +26,12 @@ namespace EnsolversChallenge.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<Note>> GetActiveNotes()
+        public async Task<List<Note>> GetActiveNotes()
         {
-            throw new NotImplementedException();
+            return await _context.Notes
+                .Where(n => !n.IsArchived)
+                .OrderBy(n => n.CreateDate)
+                .ToListAsync();
         }
 
         public Task<List<Note>> GetArchivedNotes()
