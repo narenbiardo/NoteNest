@@ -162,5 +162,19 @@ namespace EnsolversChallenge.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpDelete("{noteId}/categories/{categoryId}")]
+        public async Task<IActionResult> RemoveCategoryFromNote(int noteId, int categoryId)
+        {
+            try
+            {
+                var result = await _noteService.RemoveCategoryFromNote(noteId, categoryId);
+                return result ? NoContent() : NotFound();
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

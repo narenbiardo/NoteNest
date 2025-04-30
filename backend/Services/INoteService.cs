@@ -14,5 +14,6 @@ namespace EnsolversChallenge.Services
         Task<Note?> UnarchiveNote(int id);
         Task<List<Category>> GetNoteCategories(int noteId);
         Task<bool> AddCategoryToNote(int noteId, int categoryId);
+        Task<bool> RemoveCategoryFromNote(int noteId, int categoryId);
     }
 }

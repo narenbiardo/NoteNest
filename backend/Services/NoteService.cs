@@ -1,5 +1,6 @@
 ﻿using EnsolversChallenge.Models;
 using EnsolversChallenge.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace EnsolversChallenge.Services
 {
@@ -99,6 +100,18 @@ namespace EnsolversChallenge.Services
             if (category == null) return false;
 
             await _Noterepository.AddCategoryToNote(noteId, categoryId);
+            return true;
+        }
+
+        public async Task<bool> RemoveCategoryFromNote(int noteId, int categoryId)
+        {
+            var note = await _Noterepository.GetById(noteId);
+            if (note == null) return false;
+
+            var category = await _categoryRepository.GetById(categoryId);
+            if (category == null) return false;
+
+            await _Noterepository.RemoveCategoryFromNote(noteId, categoryId);
             return true;
         }
     }

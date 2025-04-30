@@ -92,6 +92,21 @@ namespace EnsolversChallenge.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task RemoveCategoryFromNote(int noteId, int categoryId)
+        {
+            var note = await _context.Notes
+                .Include (n => n.Categories)
+                .FirstOrDefaultAsync (n => n.Id == noteId);
+
+            var category = note?.Categories.FirstOrDefault(c => c.Id == categoryId);
+
+            if(category != null)
+            {
+                note.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 
 }
