@@ -20,7 +20,7 @@ namespace EnsolversChallenge.Services
         }
 
         // Get userId from JWT
-        private int UserId => int.Parse(
+        private int CurrentUserId => int.Parse(
             _httpContextAccessor.HttpContext!
                 .User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
@@ -40,7 +40,7 @@ namespace EnsolversChallenge.Services
                 {
                     Title = createNoteDto.Title,
                     Content = createNoteDto.Content,
-                    UserId = UserId,
+                    UserId = CurrentUserId,
                 };
                 return await _noteRepository.Add(note);
             }  
@@ -53,7 +53,7 @@ namespace EnsolversChallenge.Services
             {
                 throw new FileNotFoundException($"No note with ID:{noteId} found");
             }
-            else if(note.UserId != UserId)
+            else if(note.UserId != CurrentUserId)
             {
                 throw new UnauthorizedAccessException($"Cannot delete another user's note");
             }
@@ -68,19 +68,19 @@ namespace EnsolversChallenge.Services
         public async Task<List<Note>> GetActiveNotes()
         {
             var all = await _noteRepository.GetActiveNotes();
-            return all.Where(n => n.UserId == UserId).ToList();
+            return all.Where(n => n.UserId == CurrentUserId).ToList();
         }
 
         public async Task<List<Note>> GetArchivedNotes()
         {
             var all = await _noteRepository.GetArchivedNotes();
-            return all.Where(n => n.UserId == UserId).ToList();
+            return all.Where(n => n.UserId == CurrentUserId).ToList();
         }
 
         public async Task<Note?> GetNoteById(int noteId)
         {
             var note = await _noteRepository.GetById(noteId);
-            if (note == null || note.UserId != UserId)
+            if (note == null || note.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot access another user's note");
             return note;
         }
@@ -93,7 +93,7 @@ namespace EnsolversChallenge.Services
             {
                 throw new KeyNotFoundException($"No note found with ID {dto.NoteId}");
             }
-            else if(existingNote.UserId != UserId)
+            else if(existingNote.UserId != CurrentUserId)
             {
                 throw new UnauthorizedAccessException($"Cannot modify another user's note");
             }
@@ -108,7 +108,7 @@ namespace EnsolversChallenge.Services
         public async Task<Note?> ArchiveNote(int noteId)
         {
             var existingNote = await _noteRepository.GetById(noteId);
-            if (existingNote == null || existingNote.UserId != UserId)
+            if (existingNote == null || existingNote.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot modify another user's note");
             return await _noteRepository.UpdateArchiveStatus(noteId, true);
         }
@@ -116,7 +116,7 @@ namespace EnsolversChallenge.Services
         public async Task<Note?> UnarchiveNote(int noteId)
         {
             var existingNote = await _noteRepository.GetById(noteId);
-            if (existingNote == null || existingNote.UserId != UserId)
+            if (existingNote == null || existingNote.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot modify another user's note");
             return await _noteRepository.UpdateArchiveStatus(noteId, false); ;
         }
@@ -126,7 +126,7 @@ namespace EnsolversChallenge.Services
             var note = await _noteRepository.GetById(noteId);
             if (note == null)
                 throw new FileNotFoundException($"No note with ID:{noteId} found");
-            else if (note.UserId != UserId)
+            else if (note.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot acess another user's notes");
             else
                 return await _noteRepository.GetNoteCategories(noteId);
@@ -139,11 +139,11 @@ namespace EnsolversChallenge.Services
 
             if (note == null)
                 throw new FileNotFoundException($"No note with ID:{noteId} found");
-            else if (note.UserId != UserId)
+            else if (note.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot acess another user's notes");
             else if (category == null)
                 throw new FileNotFoundException($"No category with ID:{categoryId} found");
-            else if (category.UserId != UserId)
+            else if (category.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot acess another user's category");
             else
             {
@@ -160,11 +160,11 @@ namespace EnsolversChallenge.Services
 
             if (note == null)
                 throw new FileNotFoundException($"No note with ID:{noteId} found");
-            else if (note.UserId != UserId)
+            else if (note.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot acess another user's notes");
             else if (category == null)
                 throw new FileNotFoundException($"No category with ID:{categoryId} found");
-            else if (category.UserId != UserId)
+            else if (category.UserId != CurrentUserId)
                 throw new UnauthorizedAccessException($"Cannot acess another user's category");
             else
             {

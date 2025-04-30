@@ -6,11 +6,11 @@ namespace EnsolversChallenge.Services
 {
     public interface ICategoryService
     {
-        Task<List<Category>> GetAll();
-        Task<Category?> GetById(int id);
-        Task<Category> Create(Category category);
-        Task<Category?> Update(Category category);
-        Task<bool> Delete(int id);
-        Task<List<Note>> GetNotesByCategory(int categoryId);
+        Task<IEnumerable<Category>> GetAll();
+        Task<Category?> GetById(int categoryId);
+        Task<Category> Create(CreateCategoryDto createCategoryDto);
+        Task<Category?> Update(UpdateCategoryDto updateCategoryDto);
+        Task<bool> Delete(int categoryId);
+        Task<IEnumerable<Note>> GetNotesByCategory(int categoryId);
     }
 }

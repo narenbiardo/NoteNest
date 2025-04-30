@@ -12,15 +12,15 @@ namespace EnsolversChallenge.Controllers
     [Authorize]
     public class CategoriesController : ControllerBase
     {
-        private readonly ICategoryService _service;
-        public CategoriesController(ICategoryService service) => _service = service;
+        private readonly ICategoryService _categoryService;
+        public CategoriesController(ICategoryService categoryService) => _categoryService = categoryService;
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var list = await _service.GetAll();
+                var list = await _categoryService.GetAll();
                 return Ok(list);
             }
             catch (Exception ex)
@@ -31,11 +31,11 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int categoryId)
         {
             try
             {
-                var cat = await _service.GetById(id);
+                var cat = await _categoryService.GetById(categoryId);
                 return cat != null ? Ok(cat) : NotFound();
             }
             catch (Exception ex)
@@ -45,13 +45,25 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Category category)
+        public async Task<IActionResult> Create([FromBody] CreateCategoryDto createCategoryDto)
         {
             try
             {
-                if (!ModelState.IsValid) return BadRequest(ModelState);
-                var created = await _service.Create(category);
-                return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                else
+                {
+                    try
+                    {
+                        var created = await _categoryService.Create(createCategoryDto);
+                        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+                    }
+                    catch(Exception ex)
+                    {
+                        return BadRequest(ex.Message);  
+                    }
+                }
+                    
             }
             catch (Exception ex)
             {
@@ -60,13 +72,17 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Category category)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto updateCategoryDto)
         {
             try
             {
-                if (id != category.Id) return BadRequest("ID mismatch");
-                var updated = await _service.Update(category);
-                return updated != null ? Ok(updated) : NotFound();
+                if (id != updateCategoryDto.Id)
+                    return BadRequest("ID mismatch");
+                else
+                {
+                    var updated = await _categoryService.Update(updateCategoryDto);
+                    return updated != null ? Ok(updated) : NotFound();
+                }        
             }
             catch (Exception ex)
             {
@@ -76,11 +92,11 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int categoryId)
         {
             try
             {
-                var result = await _service.Delete(id);
+                var result = await _categoryService.Delete(categoryId);
                 return result ? NoContent() : NotFound();
             }
             catch (Exception ex)
@@ -90,11 +106,11 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpGet("{id}/notes")]
-        public async Task<IActionResult> GetNotesByCategory(int id)
+        public async Task<IActionResult> GetNotesByCategory(int categoryId)
         {
             try
             {
-                var notes = await _service.GetNotesByCategory(id);
+                var notes = await _categoryService.GetNotesByCategory(categoryId);
                 return Ok(notes);
             }
             catch (Exception ex)
