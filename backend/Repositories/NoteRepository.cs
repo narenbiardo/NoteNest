@@ -23,11 +23,17 @@ namespace EnsolversChallenge.Repositories
 
         public async Task Delete(int id)
         {
-            var note = await _context.Notes.FindAsync(id);
+            var note = await _context.Notes
+                .Include(n => n.Categories)
+                .FirstOrDefaultAsync(n => n.Id == id);
+
             if (note != null)
             {
-                _context.Notes.Remove(note);
+                note.Categories.Clear();
                 await _context.SaveChangesAsync();
+
+                _context.Notes.Remove(note);
+                await _context.SaveChangesAsync(); 
             }
         }
 

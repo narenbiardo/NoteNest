@@ -20,7 +20,7 @@ namespace EnsolversChallenge.Controllers
             _noteService = noteService;
         }
 
-        [HttpGet("{noteId}")]
+        [HttpGet("{noteId}", Name = nameof(GetNoteById))]
         public async Task<IActionResult> GetNoteById([FromRoute] int noteId)
         {
             try
@@ -45,7 +45,7 @@ namespace EnsolversChallenge.Controllers
                 else
                 {
                     var created = await _noteService.AddNote(createNoteDto);
-                    return CreatedAtAction(nameof(GetNoteById), new { id = created.Id }, created);
+                    return CreatedAtAction(nameof(GetNoteById), new { noteId = created.Id }, created);
                 }
             }
             catch (Exception ex)
@@ -117,11 +117,11 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpPatch("{noteId}/unarchive")]
-        public async Task<IActionResult> UnarchiveNote([FromRoute] int id)
+        public async Task<IActionResult> UnarchiveNote([FromRoute] int noteId)
         {
             try
             {
-                var note = await _noteService.UnarchiveNote(id);
+                var note = await _noteService.UnarchiveNote(noteId);
                 return note != null ? Ok(note) : NotFound();
             }
             catch ( Exception ex)
