@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Authorization;
 namespace EnsolversChallenge.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("category")]
     [Authorize]
     public class CategoriesController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
         public CategoriesController(ICategoryService categoryService) => _categoryService = categoryService;
 
-        [HttpGet]
+        [HttpGet("categories")]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -56,7 +56,7 @@ namespace EnsolversChallenge.Controllers
                     try
                     {
                         var created = await _categoryService.Create(createCategoryDto);
-                        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+                        return CreatedAtAction(nameof(GetById), new { categoryId = created.Id }, created);
                     }
                     catch(Exception ex)
                     {

@@ -9,15 +9,15 @@ using System.Text;
 namespace EnsolversChallenge.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("user")]
     [Authorize]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _service;
+        private readonly IUserService _userService;
         private readonly IConfiguration _configuration;
-        public UsersController(IUserService service, IConfiguration configuration)
+        public UsersController(IUserService userService, IConfiguration configuration)
         {
-            _service = service;
+            _userService = userService;
             _configuration = configuration;
         }
 
@@ -26,7 +26,7 @@ namespace EnsolversChallenge.Controllers
         {
             try
             {
-                var user = await _service.Register(creds.Username, creds.Password);
+                var user = await _userService.Register(creds.Username, creds.Password);
                 return CreatedAtAction(nameof(GetNotes), new { id = user.Id }, user);
             }
             catch (ArgumentException ex)
@@ -38,7 +38,7 @@ namespace EnsolversChallenge.Controllers
         [HttpPost("login"), AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] CredentialsDto creds)
         {
-            var user = await _service.Authenticate(creds.Username, creds.Password);
+            var user = await _userService.Authenticate(creds.Username, creds.Password);
             if (user == null) return Unauthorized();
 
             var claims = new[]
@@ -64,10 +64,10 @@ namespace EnsolversChallenge.Controllers
             });
         }
 
-        [HttpGet("{userId}/notes")]
-        public async Task<IActionResult> GetNotes([FromRoute] int userId)
+        [HttpGet("notes")]
+        public async Task<IActionResult> GetNotes()
         {
-            var notes = await _service.GetUserNotes(userId);
+            var notes = await _userService.GetUserNotes();
             return Ok(notes);
         }
     }

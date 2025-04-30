@@ -9,7 +9,7 @@ using System.Security.Claims;
 namespace EnsolversChallenge.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("note")]
     [Authorize]
     public class NotesController : ControllerBase
     {
@@ -20,12 +20,12 @@ namespace EnsolversChallenge.Controllers
             _noteService = noteService;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetNoteById(int id)
+        [HttpGet("{noteId}")]
+        public async Task<IActionResult> GetNoteById([FromRoute] int noteId)
         {
             try
             {
-                var note = await _noteService.GetNoteById(id);
+                var note = await _noteService.GetNoteById(noteId);
                 if (note == null) return NotFound();
                 return Ok(note);
             }
@@ -68,12 +68,13 @@ namespace EnsolversChallenge.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNote([FromBody] NoteUpdateDto NoteUpdateDto)
+        [HttpPut("{noteId}")]
+        public async Task<IActionResult> UpdateNote([FromRoute] int noteId, [FromBody] NoteUpdateDto noteUpdateDto)
         {
+            noteUpdateDto.NoteId = noteId;
             try
             {
-                var updated = await _noteService.UpdateNote(NoteUpdateDto);
+                var updated = await _noteService.UpdateNote(noteUpdateDto);
                 if (updated == null)
                     return NotFound();
                 else
@@ -101,12 +102,12 @@ namespace EnsolversChallenge.Controllers
             }
         }
 
-        [HttpPatch("{id}/archive")]
-        public async Task<IActionResult> ArchiveNote(int id)
+        [HttpPatch("{noteId}/archive")]
+        public async Task<IActionResult> ArchiveNote([FromRoute] int noteId)
         {
             try
             {
-                var note = await _noteService.ArchiveNote(id);
+                var note = await _noteService.ArchiveNote(noteId);
                 return note != null ? Ok(note) : NotFound();
             }
             catch( Exception ex)
@@ -115,8 +116,8 @@ namespace EnsolversChallenge.Controllers
             }
         }
 
-        [HttpPatch("{id}/unarchive")]
-        public async Task<IActionResult> UnarchiveNote(int id)
+        [HttpPatch("{noteId}/unarchive")]
+        public async Task<IActionResult> UnarchiveNote([FromRoute] int id)
         {
             try
             {
@@ -129,12 +130,12 @@ namespace EnsolversChallenge.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote(int id)
+        [HttpDelete("{noteId}")]
+        public async Task<IActionResult> DeleteNote([FromRoute] int noteId)
         {
             try
             {
-                var result = await _noteService.DeleteNote(id);
+                var result = await _noteService.DeleteNote(noteId);
                 return result ? NoContent() : NotFound();
             }
             catch (Exception ex)
@@ -144,7 +145,7 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpGet("{noteId}/categories")]
-        public async Task<IActionResult> GetNoteCategories(int noteId)
+        public async Task<IActionResult> GetNoteCategories([FromRoute] int noteId)
         {
             try
             {
@@ -157,8 +158,8 @@ namespace EnsolversChallenge.Controllers
             }
         }
 
-        [HttpPost("{noteId}/categories/{categoryId}")]
-        public async Task<IActionResult> AddCategoryToNote(int noteId, int categoryId)
+        [HttpPost("{noteId}/category/{categoryId}")]
+        public async Task<IActionResult> AddCategoryToNote([FromRoute] int noteId, [FromRoute] int categoryId)
         {
             try
             {
@@ -171,8 +172,8 @@ namespace EnsolversChallenge.Controllers
             }
         }
 
-        [HttpDelete("{noteId}/categories/{categoryId}")]
-        public async Task<IActionResult> RemoveCategoryFromNote(int noteId, int categoryId)
+        [HttpDelete("{noteId}/category/{categoryId}")]
+        public async Task<IActionResult> RemoveCategoryFromNote([FromRoute] int noteId, [FromRoute] int categoryId)
         {
             try
             {

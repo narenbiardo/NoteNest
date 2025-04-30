@@ -1,12 +1,24 @@
 ﻿using EnsolversChallenge.Models;
 using EnsolversChallenge.Repositories;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace EnsolversChallenge.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository repo) => _userRepository = repo;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
+        {
+            _userRepository = userRepository;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        // Get userId from JWT
+        private int CurrentUserId => int.Parse(
+            _httpContextAccessor.HttpContext!
+                .User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
         public async Task<User> Register(string username, string password)
         {
@@ -29,7 +41,7 @@ namespace EnsolversChallenge.Services
             return User.VerifyPassword(user.PasswordHash, password) ? user : null;
         }
 
-        public Task<List<Note>> GetUserNotes(int userId)
-            => _userRepository.GetNotesByUser(userId);
+        public Task<List<Note>> GetUserNotes()
+            => _userRepository.GetNotesByUser(CurrentUserId);
     }
 }
