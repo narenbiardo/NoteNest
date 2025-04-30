@@ -10,12 +10,15 @@ namespace EnsolversChallenge.Services
     {
         private readonly INoteRepository _noteRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICategoryRepository _categoryRepository;
 
         public NoteService(
             INoteRepository noteRepository,
+            ICategoryRepository categoryRepository,
             IHttpContextAccessor httpContextAccessor)
         {
             _noteRepository = noteRepository;
+            _categoryRepository = categoryRepository;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -135,7 +138,7 @@ namespace EnsolversChallenge.Services
         public async Task<bool> AddCategoryToNote(int noteId, int categoryId)
         {
             var note = await _noteRepository.GetById(noteId);
-            var category = await _noteRepository.GetById(categoryId);
+            var category = await _categoryRepository.GetById(categoryId);
 
             if (note == null)
                 throw new FileNotFoundException($"No note with ID:{noteId} found");
@@ -156,7 +159,7 @@ namespace EnsolversChallenge.Services
         public async Task<bool> RemoveCategoryFromNote(int noteId, int categoryId)
         {
             var note = await _noteRepository.GetById(noteId);
-            var category = await _noteRepository.GetById(categoryId);
+            var category = await _categoryRepository.GetById(categoryId);
 
             if (note == null)
                 throw new FileNotFoundException($"No note with ID:{noteId} found");
@@ -170,7 +173,7 @@ namespace EnsolversChallenge.Services
             {
                 await _noteRepository.RemoveCategoryFromNote(noteId, categoryId);
                 return true;
-            }      
+            }
         }
     }
 }

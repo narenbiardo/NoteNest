@@ -30,8 +30,8 @@ namespace EnsolversChallenge.Controllers
             
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int categoryId)
+        [HttpGet("{categoryId}", Name = nameof(GetById))]
+        public async Task<IActionResult> GetById([FromRoute] int categoryId)
         {
             try
             {
@@ -71,18 +71,14 @@ namespace EnsolversChallenge.Controllers
             }   
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto updateCategoryDto)
+        [HttpPut("{categoryId}")]
+        public async Task<IActionResult> Update([FromRoute] int categoryId, [FromBody] UpdateCategoryDto updateCategoryDto)
         {
+            updateCategoryDto.Id = categoryId;
             try
             {
-                if (id != updateCategoryDto.Id)
-                    return BadRequest("ID mismatch");
-                else
-                {
-                    var updated = await _categoryService.Update(updateCategoryDto);
-                    return updated != null ? Ok(updated) : NotFound();
-                }        
+                var updated = await _categoryService.Update(updateCategoryDto);
+                return updated != null ? Ok(updated) : NotFound();     
             }
             catch (Exception ex)
             {
@@ -91,8 +87,8 @@ namespace EnsolversChallenge.Controllers
             
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int categoryId)
+        [HttpDelete("{categoryId}")]
+        public async Task<IActionResult> Delete([FromRoute] int categoryId)
         {
             try
             {
@@ -105,8 +101,8 @@ namespace EnsolversChallenge.Controllers
             }
         }
 
-        [HttpGet("{id}/notes")]
-        public async Task<IActionResult> GetNotesByCategory(int categoryId)
+        [HttpGet("{categoryId}/notes")]
+        public async Task<IActionResult> GetNotesByCategory([FromRoute] int categoryId)
         {
             try
             {

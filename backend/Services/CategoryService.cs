@@ -11,10 +11,10 @@ namespace EnsolversChallenge.Services
         private readonly ICategoryRepository _categoryRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public CategoryService(
-                ICategoryRepository repo,
+                ICategoryRepository categoryRepository,
                 IHttpContextAccessor httpContextAccessor)
         {
-            _categoryRepository = repo;
+            _categoryRepository = categoryRepository;
             _httpContextAccessor = httpContextAccessor;
         }
 
