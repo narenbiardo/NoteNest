@@ -11,6 +11,7 @@ namespace EnsolversChallenge.Data
 
         public DbSet<Note> Notes => Set<Note>();
         public DbSet<Category> Categories => Set<Category>();
+        public DbSet<User> Users => Set<User>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +40,22 @@ namespace EnsolversChallenge.Data
 
                 entity.Property(c => c.Description)
                 .HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Notes)
+                .WithOne(n => n.User)
+                .HasForeignKey(n => n.UserId);
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.Property(c => c.Username)
+                .HasMaxLength(50)
+                .IsRequired();
+
+                entity.Property(c => c.PasswordHash)
+                .HasMaxLength(256)
+                .IsRequired();
             });
         }
     }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EnsolversChallenge.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250429210648_AddCategoryModelAndRelations")]
-    partial class AddCategoryModelAndRelations
+    [Migration("20250430055601_UserHashFix")]
+    partial class UserHashFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,9 +89,37 @@ namespace EnsolversChallenge.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Notes");
+                });
+
+            modelBuilder.Entity("EnsolversChallenge.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CategoryNote", b =>
@@ -107,6 +135,22 @@ namespace EnsolversChallenge.Migrations
                         .HasForeignKey("NotesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EnsolversChallenge.Models.Note", b =>
+                {
+                    b.HasOne("EnsolversChallenge.Models.User", "User")
+                        .WithMany("Notes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("EnsolversChallenge.Models.User", b =>
+                {
+                    b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618
         }

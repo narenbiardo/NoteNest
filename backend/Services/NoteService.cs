@@ -6,13 +6,11 @@ namespace EnsolversChallenge.Services
 {
     public class NoteService : INoteService
     {
-        private readonly INoteRepository _Noterepository;
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly INoteRepository _noteRepository;
 
         public NoteService(INoteRepository noteRepository, ICategoryRepository categoryRepository)
         {
-            _Noterepository = noteRepository;
-            _categoryRepository = categoryRepository;
+            _noteRepository = noteRepository;
         }
 
         public async Task<Note> AddNote(Note note)
@@ -27,42 +25,42 @@ namespace EnsolversChallenge.Services
             }
             else
             {
-                return await _Noterepository.Add(note);
+                return await _noteRepository.Add(note);
             }  
         }
 
         public async Task<bool> DeleteNote(int id)
         {
-            var note = await _Noterepository.GetById(id);
+            var note = await _noteRepository.GetById(id);
             if (note == null)
             {
                 return false;
             }
             else
             {
-                await _Noterepository.Delete(id);
+                await _noteRepository.Delete(id);
                 return true;
             }
         }
 
         public async Task<List<Note>> GetActiveNotes()
         {
-            return await _Noterepository.GetActiveNotes();
+            return await _noteRepository.GetActiveNotes();
         }
 
         public async Task<List<Note>> GetArchivedNotes()
         {
-            return await _Noterepository.GetArchivedNotes();
+            return await _noteRepository.GetArchivedNotes();
         }
 
         public async Task<Note?> GetNoteById(int id)
         {
-            return await _Noterepository.GetById(id);
+            return await _noteRepository.GetById(id);
         }
 
         public async Task<Note> UpdateNote(int id, NoteUpdateDto dto)
         {
-            var existingNote = await _Noterepository.GetById(id);
+            var existingNote = await _noteRepository.GetById(id);
 
             if(existingNote == null)
             {
@@ -72,46 +70,46 @@ namespace EnsolversChallenge.Services
             {
                 existingNote.Title = dto.Title;
                 existingNote.Content = dto.Content;
-                return await _Noterepository.Update(existingNote);
+                return await _noteRepository.Update(existingNote);
             }
         }
 
         public async Task<Note?> ArchiveNote(int id)
         {
-            return await _Noterepository.UpdateArchiveStatus(id, true);
+            return await _noteRepository.UpdateArchiveStatus(id, true);
         }
 
         public async Task<Note?> UnarchiveNote(int id)
         {
-            return await _Noterepository.UpdateArchiveStatus(id, false);
+            return await _noteRepository.UpdateArchiveStatus(id, false);
         }
 
         public async Task<List<Category>> GetNoteCategories(int noteId)
         {
-            return await _Noterepository.GetNoteCategories(noteId);
+            return await _noteRepository.GetNoteCategories(noteId);
         }
 
         public async Task<bool> AddCategoryToNote(int noteId, int categoryId)
         {
-            var note = await _Noterepository.GetById(noteId);
+            var note = await _noteRepository.GetById(noteId);
             if (note == null) return false;
 
-            var category = await _categoryRepository.GetById(categoryId);
+            var category = await _noteRepository.GetById(categoryId);
             if (category == null) return false;
 
-            await _Noterepository.AddCategoryToNote(noteId, categoryId);
+            await _noteRepository.AddCategoryToNote(noteId, categoryId);
             return true;
         }
 
         public async Task<bool> RemoveCategoryFromNote(int noteId, int categoryId)
         {
-            var note = await _Noterepository.GetById(noteId);
+            var note = await _noteRepository.GetById(noteId);
             if (note == null) return false;
 
-            var category = await _categoryRepository.GetById(categoryId);
+            var category = await _noteRepository.GetById(categoryId);
             if (category == null) return false;
 
-            await _Noterepository.RemoveCategoryFromNote(noteId, categoryId);
+            await _noteRepository.RemoveCategoryFromNote(noteId, categoryId);
             return true;
         }
     }
