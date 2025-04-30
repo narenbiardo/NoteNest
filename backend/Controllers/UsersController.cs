@@ -64,10 +64,10 @@ namespace EnsolversChallenge.Controllers
             });
         }
 
-        [HttpGet("{id}/notes")]
-        public async Task<IActionResult> GetNotes(int id)
+        [HttpGet("{userId}/notes")]
+        public async Task<IActionResult> GetNotes([FromRoute] int userId)
         {
-            var notes = await _service.GetUserNotes(id);
+            var notes = await _service.GetUserNotes(userId);
             return Ok(notes);
         }
     }
