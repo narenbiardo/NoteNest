@@ -134,5 +134,33 @@ namespace EnsolversChallenge.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("{noteId}/categories")]
+        public async Task<IActionResult> GetNoteCategories(int noteId)
+        {
+            try
+            {
+                var categories = await _noteService.GetNoteCategories(noteId);
+                return Ok(categories);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{noteId}/categories/{categoryId}")]
+        public async Task<IActionResult> AddCategoryToNote(int noteId, int categoryId)
+        {
+            try
+            {
+                var result = await _noteService.AddCategoryToNote(noteId, categoryId);
+                return result ? NoContent() : NotFound();
+            }
+            catch( Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

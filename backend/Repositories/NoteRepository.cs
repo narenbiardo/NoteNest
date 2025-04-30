@@ -69,6 +69,29 @@ namespace EnsolversChallenge.Repositories
             }
             return note;
         }
+
+        public async Task<List<Category>> GetNoteCategories(int noteId)
+        {
+            return await _context.Notes
+                .Where(n => n.Id == noteId)
+                .SelectMany(n => n.Categories)
+                .ToListAsync();
+        }
+
+        public async Task AddCategoryToNote(int noteId, int categoryId)
+        {
+            var note = await _context.Notes
+                .Include(n => n.Categories)
+                .FirstOrDefaultAsync(n => n.Id == noteId);
+
+            var category = await _context.Categories.FindAsync(categoryId);
+
+            if (note != null && category != null && !note.Categories.Contains(category))
+            {
+                note.Categories.Add(category);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 
 }

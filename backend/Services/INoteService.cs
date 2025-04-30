@@ -12,5 +12,7 @@ namespace EnsolversChallenge.Services
         Task<bool> DeleteNote(int id);
         Task<Note?> ArchiveNote(int id);
         Task<Note?> UnarchiveNote(int id);
+        Task<List<Category>> GetNoteCategories(int noteId);
+        Task<bool> AddCategoryToNote(int noteId, int categoryId);
     }
 }

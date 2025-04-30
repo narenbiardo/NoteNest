@@ -11,5 +11,7 @@ namespace EnsolversChallenge.Repositories
         Task<Note> Update(Note note);
         Task Delete(int id);
         Task<Note?> UpdateArchiveStatus(int id, bool archiveStatus);
+        Task<List<Category>> GetNoteCategories(int noteId);
+        Task AddCategoryToNote(int noteId, int categoryId);
     }
 }
