@@ -58,13 +58,17 @@ namespace EnsolversChallenge.Services
             return await _noteRepository.GetById(id);
         }
 
-        public async Task<Note> UpdateNote(int id, NoteUpdateDto dto)
+        public async Task<Note> UpdateNote(NoteUpdateDto dto)
         {
-            var existingNote = await _noteRepository.GetById(id);
+            var existingNote = await _noteRepository.GetById(dto.NoteId);
 
             if(existingNote == null)
             {
-                throw new KeyNotFoundException($"No note found with ID {id}");
+                throw new KeyNotFoundException($"No note found with ID {dto.NoteId}");
+            }
+            else if(existingNote.UserId != dto.UserId)
+            {
+                throw new UnauthorizedAccessException($"Cannot modify another user's note");
             }
             else
             {

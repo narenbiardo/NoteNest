@@ -4,6 +4,7 @@ using EnsolversChallenge.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace EnsolversChallenge.Controllers
 {
@@ -35,12 +36,24 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNote([FromBody] Note note)
+        public async Task<IActionResult> AddNote([FromBody] CreateNoteDto dto)
         {
             try
             {
-                var createNote = await _noteService.AddNote(note);
-                return CreatedAtAction(nameof(GetNoteById), new { id = createNote.Id }, createNote);
+                if (!ModelState.IsValid)
+                    return ValidationProblem(ModelState);
+
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+                var note = new Note
+                {
+                    Title = dto.Title,
+                    Content = dto.Content,
+                    UserId = userId
+                };
+
+                var created = await _noteService.AddNote(note);
+
+                return CreatedAtAction(nameof(GetNoteById), new { id = created.Id }, created);
             }
             catch (Exception ex)
             {
@@ -63,11 +76,11 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNote(int id, [FromBody] NoteUpdateDto dto)
+        public async Task<IActionResult> UpdateNote([FromBody] NoteUpdateDto dto)
         {
             try
             {
-                var updated = await _noteService.UpdateNote(id, dto);
+                var updated = await _noteService.UpdateNote(dto);
                 if (updated == null)
                     return NotFound();
                 else
