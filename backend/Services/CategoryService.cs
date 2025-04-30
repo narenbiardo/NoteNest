@@ -15,5 +15,6 @@ namespace EnsolversChallenge.Services
         public Task<Category> Create(Category category) => _repo.Add(category);
         public Task<Category?> Update(Category category) => _repo.Update(category);
         public Task<bool> Delete(int id) => _repo.Delete(id);
+        public Task<List<Note>> GetNotesByCategory(int categoryId) => _repo.GetNotesByCategory(categoryId);
     }
 }

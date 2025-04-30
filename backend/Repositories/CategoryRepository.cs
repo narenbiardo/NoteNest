@@ -36,5 +36,12 @@ namespace EnsolversChallenge.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<Note>> GetNotesByCategory(int categoryId)
+        {
+            return await _context.Notes
+                .Where(n => n.Categories.Any(c => c.Id == categoryId))
+                .ToListAsync();
+        }
     }
 }

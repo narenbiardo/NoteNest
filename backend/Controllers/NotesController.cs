@@ -42,7 +42,7 @@ namespace EnsolversChallenge.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -56,7 +56,7 @@ namespace EnsolversChallenge.Controllers
             }
             catch(Exception ex) 
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -89,7 +89,7 @@ namespace EnsolversChallenge.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
