@@ -1,61 +1,88 @@
 ﻿using EnsolversChallenge.Models;
 using EnsolversChallenge.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace EnsolversChallenge.Services
 {
     public class NoteService : INoteService
     {
         private readonly INoteRepository _noteRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public NoteService(INoteRepository noteRepository, ICategoryRepository categoryRepository)
+        public NoteService(
+            INoteRepository noteRepository,
+            IHttpContextAccessor httpContextAccessor)
         {
             _noteRepository = noteRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Note> AddNote(Note note)
+        // Get userId from JWT
+        private int UserId => int.Parse(
+            _httpContextAccessor.HttpContext!
+                .User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        public async Task<Note> AddNote(CreateNoteDto createNoteDto)
         {
-            if (string.IsNullOrWhiteSpace(note.Title))
+            if (string.IsNullOrWhiteSpace(createNoteDto.Title))
             {
                 throw new ArgumentException("Title cannot be empty");
             }
-            else if (string.IsNullOrWhiteSpace(note.Content))
+            else if (string.IsNullOrWhiteSpace(createNoteDto.Content))
             {
                 throw new ArgumentException("Content cannot be empty");
             }
             else
             {
+                var note = new Note
+                {
+                    Title = createNoteDto.Title,
+                    Content = createNoteDto.Content,
+                    UserId = UserId,
+                };
                 return await _noteRepository.Add(note);
             }  
         }
 
-        public async Task<bool> DeleteNote(int id)
+        public async Task<bool> DeleteNote(int noteId)
         {
-            var note = await _noteRepository.GetById(id);
+            var note = await _noteRepository.GetById(noteId);
             if (note == null)
             {
-                return false;
+                throw new FileNotFoundException($"No note with ID:{noteId} found");
+            }
+            else if(note.UserId != UserId)
+            {
+                throw new UnauthorizedAccessException($"Cannot delete another user's note");
             }
             else
             {
-                await _noteRepository.Delete(id);
+                await _noteRepository.Delete(noteId);
                 return true;
             }
+                    
         }
 
         public async Task<List<Note>> GetActiveNotes()
         {
-            return await _noteRepository.GetActiveNotes();
+            var all = await _noteRepository.GetActiveNotes();
+            return all.Where(n => n.UserId == UserId).ToList();
         }
 
         public async Task<List<Note>> GetArchivedNotes()
         {
-            return await _noteRepository.GetArchivedNotes();
+            var all = await _noteRepository.GetArchivedNotes();
+            return all.Where(n => n.UserId == UserId).ToList();
         }
 
-        public async Task<Note?> GetNoteById(int id)
+        public async Task<Note?> GetNoteById(int noteId)
         {
-            return await _noteRepository.GetById(id);
+            var note = await _noteRepository.GetById(noteId);
+            if (note == null || note.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot access another user's note");
+            return note;
         }
 
         public async Task<Note> UpdateNote(NoteUpdateDto dto)
@@ -66,7 +93,7 @@ namespace EnsolversChallenge.Services
             {
                 throw new KeyNotFoundException($"No note found with ID {dto.NoteId}");
             }
-            else if(existingNote.UserId != dto.UserId)
+            else if(existingNote.UserId != UserId)
             {
                 throw new UnauthorizedAccessException($"Cannot modify another user's note");
             }
@@ -78,43 +105,72 @@ namespace EnsolversChallenge.Services
             }
         }
 
-        public async Task<Note?> ArchiveNote(int id)
+        public async Task<Note?> ArchiveNote(int noteId)
         {
-            return await _noteRepository.UpdateArchiveStatus(id, true);
+            var existingNote = await _noteRepository.GetById(noteId);
+            if (existingNote == null || existingNote.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot modify another user's note");
+            return await _noteRepository.UpdateArchiveStatus(noteId, true);
         }
 
-        public async Task<Note?> UnarchiveNote(int id)
+        public async Task<Note?> UnarchiveNote(int noteId)
         {
-            return await _noteRepository.UpdateArchiveStatus(id, false);
+            var existingNote = await _noteRepository.GetById(noteId);
+            if (existingNote == null || existingNote.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot modify another user's note");
+            return await _noteRepository.UpdateArchiveStatus(noteId, false); ;
         }
 
         public async Task<List<Category>> GetNoteCategories(int noteId)
         {
-            return await _noteRepository.GetNoteCategories(noteId);
+            var note = await _noteRepository.GetById(noteId);
+            if (note == null)
+                throw new FileNotFoundException($"No note with ID:{noteId} found");
+            else if (note.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot acess another user's notes");
+            else
+                return await _noteRepository.GetNoteCategories(noteId);
         }
 
         public async Task<bool> AddCategoryToNote(int noteId, int categoryId)
         {
             var note = await _noteRepository.GetById(noteId);
-            if (note == null) return false;
-
             var category = await _noteRepository.GetById(categoryId);
-            if (category == null) return false;
 
-            await _noteRepository.AddCategoryToNote(noteId, categoryId);
-            return true;
+            if (note == null)
+                throw new FileNotFoundException($"No note with ID:{noteId} found");
+            else if (note.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot acess another user's notes");
+            else if (category == null)
+                throw new FileNotFoundException($"No category with ID:{categoryId} found");
+            else if (category.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot acess another user's category");
+            else
+            {
+                await _noteRepository.AddCategoryToNote(noteId, categoryId);
+                return true;
+            }
+                
         }
 
         public async Task<bool> RemoveCategoryFromNote(int noteId, int categoryId)
         {
             var note = await _noteRepository.GetById(noteId);
-            if (note == null) return false;
-
             var category = await _noteRepository.GetById(categoryId);
-            if (category == null) return false;
 
-            await _noteRepository.RemoveCategoryFromNote(noteId, categoryId);
-            return true;
+            if (note == null)
+                throw new FileNotFoundException($"No note with ID:{noteId} found");
+            else if (note.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot acess another user's notes");
+            else if (category == null)
+                throw new FileNotFoundException($"No category with ID:{categoryId} found");
+            else if (category.UserId != UserId)
+                throw new UnauthorizedAccessException($"Cannot acess another user's category");
+            else
+            {
+                await _noteRepository.RemoveCategoryFromNote(noteId, categoryId);
+                return true;
+            }      
         }
     }
 }

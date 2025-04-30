@@ -7,9 +7,6 @@ namespace EnsolversChallenge.Models
         [Required]
         public int NoteId { get; set; } = default!;
 
-        [Required]
-        public int UserId { get; set; } = default!;
-
         [Required, StringLength(50)]
         public string Title { get; set; } = default!;
 

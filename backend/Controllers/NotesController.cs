@@ -36,24 +36,17 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNote([FromBody] CreateNoteDto dto)
+        public async Task<IActionResult> AddNote([FromBody] CreateNoteDto createNoteDto)
         {
             try
             {
                 if (!ModelState.IsValid)
                     return ValidationProblem(ModelState);
-
-                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-                var note = new Note
+                else
                 {
-                    Title = dto.Title,
-                    Content = dto.Content,
-                    UserId = userId
-                };
-
-                var created = await _noteService.AddNote(note);
-
-                return CreatedAtAction(nameof(GetNoteById), new { id = created.Id }, created);
+                    var created = await _noteService.AddNote(createNoteDto);
+                    return CreatedAtAction(nameof(GetNoteById), new { id = created.Id }, created);
+                }
             }
             catch (Exception ex)
             {
@@ -76,11 +69,11 @@ namespace EnsolversChallenge.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNote([FromBody] NoteUpdateDto dto)
+        public async Task<IActionResult> UpdateNote([FromBody] NoteUpdateDto NoteUpdateDto)
         {
             try
             {
-                var updated = await _noteService.UpdateNote(dto);
+                var updated = await _noteService.UpdateNote(NoteUpdateDto);
                 if (updated == null)
                     return NotFound();
                 else
