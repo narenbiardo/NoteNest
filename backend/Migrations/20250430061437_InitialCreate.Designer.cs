@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EnsolversChallenge.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250430055601_UserHashFix")]
-    partial class UserHashFix
+    [Migration("20250430061437_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace EnsolversChallenge.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CategoryNote", b =>
-                {
-                    b.Property<int>("CategoriesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NotesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CategoriesId", "NotesId");
-
-                    b.HasIndex("NotesId");
-
-                    b.ToTable("NoteCategories", (string)null);
-                });
 
             modelBuilder.Entity("EnsolversChallenge.Models.Category", b =>
                 {
@@ -58,7 +43,12 @@ namespace EnsolversChallenge.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Categories");
                 });
@@ -122,19 +112,30 @@ namespace EnsolversChallenge.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CategoryNote", b =>
+            modelBuilder.Entity("NoteCategories", b =>
                 {
-                    b.HasOne("EnsolversChallenge.Models.Category", null)
-                        .WithMany()
-                        .HasForeignKey("CategoriesId")
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NoteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CategoryId", "NoteId");
+
+                    b.HasIndex("NoteId");
+
+                    b.ToTable("NoteCategories");
+                });
+
+            modelBuilder.Entity("EnsolversChallenge.Models.Category", b =>
+                {
+                    b.HasOne("EnsolversChallenge.Models.User", "User")
+                        .WithMany("Categories")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EnsolversChallenge.Models.Note", null)
-                        .WithMany()
-                        .HasForeignKey("NotesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("EnsolversChallenge.Models.Note", b =>
@@ -148,8 +149,25 @@ namespace EnsolversChallenge.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("NoteCategories", b =>
+                {
+                    b.HasOne("EnsolversChallenge.Models.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EnsolversChallenge.Models.Note", null)
+                        .WithMany()
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("EnsolversChallenge.Models.User", b =>
                 {
+                    b.Navigation("Categories");
+
                     b.Navigation("Notes");
                 });
 #pragma warning restore 612, 618

@@ -11,12 +11,14 @@ namespace EnsolversChallenge.Models
 
         [Required]
         [StringLength(25)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
         [StringLength(50)]
-        public string Description { get; set; }
+        public required string Description { get; set; } 
 
         public ICollection<Note> Notes { get; set; } = new List<Note>();
+        public int UserId { get; set; }
+        public User User { get; set; } = default!;
     }
 }

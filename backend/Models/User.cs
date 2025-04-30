@@ -15,7 +15,8 @@ namespace EnsolversChallenge.Models
         public string PasswordHash { get; set; } = default!;
 
         //One to many relationship (one user can have multiple notes)
-        public ICollection<Note> Notes { get; set; } = new List<Note>();
+        public ICollection<Note> Notes { get; set; } = [];
+        public ICollection<Category> Categories { get; set; } = [];
 
         public static string HashPassword(string password)
         {

@@ -3,11 +3,13 @@ using EnsolversChallenge.Services;
 using EnsolversChallenge.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EnsolversChallenge.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class NotesController : ControllerBase
     {
         private readonly INoteService _noteService;

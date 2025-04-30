@@ -20,7 +20,19 @@ namespace EnsolversChallenge.Data
             modelBuilder.Entity<Note>()
                 .HasMany(n => n.Categories)
                 .WithMany(c => c.Notes)
-                .UsingEntity(j => j.ToTable("NoteCategories"));
+                .UsingEntity<Dictionary<string, object>>(
+                    "NoteCategories",
+                    j => j
+                        .HasOne<Category>()
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade),
+                   j => j
+                        .HasOne<Note>()
+                        .WithMany()
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+        );
 
             modelBuilder.Entity<Note>(entity =>
             {
@@ -46,6 +58,11 @@ namespace EnsolversChallenge.Data
                 .HasMany(u => u.Notes)
                 .WithOne(n => n.User)
                 .HasForeignKey(n => n.UserId);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Categories)
+                .WithOne(c => c.User)
+                .HasForeignKey(c => c.UserId);
 
             modelBuilder.Entity<User>(entity =>
             {
