@@ -7,5 +7,6 @@ namespace EnsolversChallenge.Services
         Task<User> Register(string username, string password);
         Task<User?> Authenticate(string username, string password);
         Task<List<Note>> GetUserNotes();
+        Task<IEnumerable<Category>> GetUserCategories();
     }
 }

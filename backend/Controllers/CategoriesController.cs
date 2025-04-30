@@ -15,21 +15,6 @@ namespace EnsolversChallenge.Controllers
         private readonly ICategoryService _categoryService;
         public CategoriesController(ICategoryService categoryService) => _categoryService = categoryService;
 
-        [HttpGet("categories")]
-        public async Task<IActionResult> GetAll()
-        {
-            try
-            {
-                var list = await _categoryService.GetAll();
-                return Ok(list);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            
-        }
-
         [HttpGet("{categoryId}", Name = nameof(GetById))]
         public async Task<IActionResult> GetById([FromRoute] int categoryId)
         {

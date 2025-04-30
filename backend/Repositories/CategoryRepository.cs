@@ -11,7 +11,6 @@ namespace EnsolversChallenge.Repositories
         private readonly ApplicationDbContext _context;
         public CategoryRepository(ApplicationDbContext context) => _context = context;
 
-        public async Task<List<Category>> GetAll() => await _context.Categories.ToListAsync();
         public async Task<Category?> GetById(int id) => await _context.Categories.FindAsync(id);
         public async Task<Category> Add(Category category)
         {
@@ -41,6 +40,13 @@ namespace EnsolversChallenge.Repositories
         {
             return await _context.Notes
                 .Where(n => n.Categories.Any(c => c.Id == categoryId))
+                .ToListAsync();
+        }
+
+        public async Task<List<Category>> GetByUser(int userId)
+        {
+            return await _context.Categories
+                .Where(c => c.UserId == userId)
                 .ToListAsync();
         }
     }

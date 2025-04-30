@@ -6,7 +6,6 @@ namespace EnsolversChallenge.Services
 {
     public interface ICategoryService
     {
-        Task<IEnumerable<Category>> GetAll();
         Task<Category?> GetById(int categoryId);
         Task<Category> Create(CreateCategoryDto createCategoryDto);
         Task<Category?> Update(UpdateCategoryDto updateCategoryDto);

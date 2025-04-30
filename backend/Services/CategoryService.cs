@@ -23,11 +23,6 @@ namespace EnsolversChallenge.Services
             int.Parse(_httpContextAccessor.HttpContext!
                 .User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-        public async Task<IEnumerable<Category>> GetAll()
-        {
-            var all = await _categoryRepository.GetAll();
-            return all.Where(c => c.UserId == CurrentUserId);
-        }
         public async Task<Category?> GetById(int categoryId)
         {
             var category = await _categoryRepository.GetById(categoryId);

@@ -70,6 +70,13 @@ namespace EnsolversChallenge.Controllers
             var notes = await _userService.GetUserNotes();
             return Ok(notes);
         }
+
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetMyCategories()
+        {
+            var cats = await _userService.GetUserCategories();
+            return Ok(cats);
+        }
     }
 
     public class CredentialsDto

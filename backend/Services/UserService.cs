@@ -8,10 +8,12 @@ namespace EnsolversChallenge.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public UserService(IUserRepository userRepository, IHttpContextAccessor httpContextAccessor)
+        public UserService(IUserRepository userRepository, ICategoryRepository categoryRepository, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
+            _categoryRepository = categoryRepository;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -43,5 +45,10 @@ namespace EnsolversChallenge.Services
 
         public Task<List<Note>> GetUserNotes()
             => _userRepository.GetNotesByUser(CurrentUserId);
+
+        public async Task<IEnumerable<Category>> GetUserCategories()
+        {
+            return await _categoryRepository.GetByUser(CurrentUserId);
+        }
     }
 }
