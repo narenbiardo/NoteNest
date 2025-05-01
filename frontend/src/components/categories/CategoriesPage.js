@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./CategoriesPage.css";
 
+axios.defaults.baseURL = "";
+
 const CategoriesPage = () => {
 	const [categories, setCategories] = useState([]);
 	const [showModal, setShowModal] = useState(false);
 	const [editMode, setEditMode] = useState(false);
 	const [selectedCategory, setSelectedCategory] = useState(null);
-	const [formData, setFormData] = useState({
-		name: "",
-		description: "",
-	});
+	const [formData, setFormData] = useState({ name: "", description: "" });
 
 	useEffect(() => {
 		fetchCategories();
@@ -19,10 +18,9 @@ const CategoriesPage = () => {
 	const fetchCategories = async () => {
 		try {
 			const token = localStorage.getItem("token");
-			const response = await axios.get(
-				"https://localhost:7200/user/categories",
-				{ headers: { Authorization: `Bearer ${token}` } }
-			);
+			const response = await axios.get("/user/categories", {
+				headers: { Authorization: `Bearer ${token}` },
+			});
 			setCategories(response.data);
 		} catch (error) {
 			console.error(
@@ -37,10 +35,7 @@ const CategoriesPage = () => {
 		e.preventDefault();
 		try {
 			const token = localStorage.getItem("token");
-			const url = editMode
-				? `https://localhost:7200/category/${selectedCategory.id}`
-				: "https://localhost:7200/category";
-
+			const url = editMode ? `/category/${selectedCategory.id}` : "/category";
 			const method = editMode ? axios.put : axios.post;
 
 			await method(url, formData, {
@@ -62,7 +57,7 @@ const CategoriesPage = () => {
 		if (window.confirm("Do you really want to delete this category?")) {
 			try {
 				const token = localStorage.getItem("token");
-				await axios.delete(`https://localhost:7200/category/${id}`, {
+				await axios.delete(`/category/${id}`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 				fetchCategories();

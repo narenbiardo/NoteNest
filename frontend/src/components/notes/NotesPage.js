@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./NotesPage.css";
 
+axios.defaults.baseURL = "";
+
 const NotesPage = () => {
 	const [notes, setNotes] = useState([]);
 	const [categories, setCategories] = useState({});
@@ -15,40 +17,39 @@ const NotesPage = () => {
 			try {
 				const token = localStorage.getItem("token");
 
-				const categoriesRes = await axios.get(
-					"https://localhost:7200/user/categories",
-					{
-						headers: { Authorization: `Bearer ${token}` },
-					}
-				);
-				setAllCategories(categoriesRes.data);
+				// Fetch all categories
+				const { data: cats } = await axios.get("/user/categories", {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				setAllCategories(cats);
 
-				let notesUrl = "https://localhost:7200/user/notes";
-				if (selectedCategory) {
-					notesUrl = `https://localhost:7200/category/${selectedCategory}/notes`;
-				}
-
-				const notesRes = await axios.get(notesUrl, {
+				// Fetch notes (filtered or all)
+				const notesEndpoint = selectedCategory
+					? `/category/${selectedCategory}/notes`
+					: "/user/notes";
+				const { data: notesData } = await axios.get(notesEndpoint, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 
+				// Fetch each note’s categories in parallel
 				const categoriesData = {};
 				await Promise.all(
-					notesRes.data.map(async note => {
-						const res = await axios.get(
-							`https://localhost:7200/note/${note.id}/categories`,
+					notesData.map(async note => {
+						const { data: noteCats } = await axios.get(
+							`/note/${note.id}/categories`,
 							{ headers: { Authorization: `Bearer ${token}` } }
 						);
-						categoriesData[note.id] = res.data;
+						categoriesData[note.id] = noteCats;
 					})
 				);
 
-				setNotes(notesRes.data);
+				setNotes(notesData);
 				setCategories(categoriesData);
 			} catch (error) {
-				console.error("Error cargando datos:", error);
+				console.error("Error loading data:", error);
 			}
 		};
+
 		fetchData();
 	}, [selectedCategory]);
 
@@ -56,37 +57,32 @@ const NotesPage = () => {
 		try {
 			const token = localStorage.getItem("token");
 			await axios.post(
-				"https://localhost:7200/note",
-				{
-					title: "New Note",
-					content: "Note content",
-				},
+				"/note",
+				{ title: "New Note", content: "Note content" },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
-
-			const notesRes = await axios.get(
-				selectedCategory
-					? `https://localhost:7200/category/${selectedCategory}/notes`
-					: "https://localhost:7200/user/notes",
-				{ headers: { Authorization: `Bearer ${token}` } }
-			);
-
+			// Refresh notes
+			const notesEndpoint = selectedCategory
+				? `/category/${selectedCategory}/notes`
+				: "/user/notes";
+			const { data: notesData } = await axios.get(notesEndpoint, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
 			const categoriesData = {};
 			await Promise.all(
-				notesRes.data.map(async note => {
-					const res = await axios.get(
-						`https://localhost:7200/note/${note.id}/categories`,
+				notesData.map(async note => {
+					const { data: noteCats } = await axios.get(
+						`/note/${note.id}/categories`,
 						{ headers: { Authorization: `Bearer ${token}` } }
 					);
-					categoriesData[note.id] = res.data;
+					categoriesData[note.id] = noteCats;
 				})
 			);
-
-			setNotes(notesRes.data);
+			setNotes(notesData);
 			setCategories(categoriesData);
 		} catch (error) {
-			console.error("Error trying to create the note:", error);
-			alert("Error trying to create the note");
+			console.error("Error creating note:", error);
+			alert("Error creating note");
 		}
 	};
 
@@ -94,25 +90,25 @@ const NotesPage = () => {
 		try {
 			const token = localStorage.getItem("token");
 			await axios.put(
-				`https://localhost:7200/note/${id}`,
+				`/note/${id}`,
 				{ title, content },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
 		} catch (error) {
-			console.error("Error editing the note:", error);
+			console.error("Error editing note:", error);
 		}
 	};
 
 	const handleDelete = async id => {
-		if (window.confirm("¿Are you sure you want to delete this note?")) {
+		if (window.confirm("Are you sure you want to delete this note?")) {
 			try {
 				const token = localStorage.getItem("token");
-				await axios.delete(`https://localhost:7200/note/${id}`, {
+				await axios.delete(`/note/${id}`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 				setNotes(prev => prev.filter(note => note.id !== id));
 			} catch (error) {
-				console.error("Error eliminando nota:", error);
+				console.error("Error deleting note:", error);
 			}
 		}
 	};
@@ -120,21 +116,19 @@ const NotesPage = () => {
 	const toggleArchive = async note => {
 		try {
 			const token = localStorage.getItem("token");
-			const endpoint = note.isArchived ? "unarchive" : "archive";
-
+			const action = note.isArchived ? "unarchive" : "archive";
 			await axios.patch(
-				`https://localhost:7200/note/${note.id}/${endpoint}`,
+				`/note/${note.id}/${action}`,
 				{},
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
-
 			setNotes(prev =>
 				prev.map(n =>
 					n.id === note.id ? { ...n, isArchived: !n.isArchived } : n
 				)
 			);
 		} catch (error) {
-			console.error("Error changing the state:", error);
+			console.error("Error toggling archive:", error);
 		}
 	};
 
@@ -142,11 +136,10 @@ const NotesPage = () => {
 		try {
 			const token = localStorage.getItem("token");
 			await axios.post(
-				`https://localhost:7200/note/${selectedNoteId}/category/${categoryId}`,
+				`/note/${selectedNoteId}/category/${categoryId}`,
 				{},
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
-
 			setCategories(prev => ({
 				...prev,
 				[selectedNoteId]: [
@@ -154,35 +147,30 @@ const NotesPage = () => {
 					allCategories.find(c => c.id === categoryId),
 				],
 			}));
-
 			setShowCategoryModal(false);
 		} catch (error) {
-			console.error("Error adding the category:", error);
+			console.error("Error adding category:", error);
 		}
 	};
 
 	const handleRemoveCategory = async (noteId, categoryId) => {
 		try {
 			const token = localStorage.getItem("token");
-			await axios.delete(
-				`https://localhost:7200/note/${noteId}/category/${categoryId}`,
-				{ headers: { Authorization: `Bearer ${token}` } }
-			);
-
+			await axios.delete(`/note/${noteId}/category/${categoryId}`, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
 			setCategories(prev => ({
 				...prev,
 				[noteId]: prev[noteId].filter(c => c.id !== categoryId),
 			}));
 		} catch (error) {
-			console.error("Error deleting the category from the note:", error);
+			console.error("Error removing category:", error);
 		}
 	};
 
 	const handleChange = (id, field, value) => {
-		setNotes(prevNotes =>
-			prevNotes.map(note =>
-				note.id === id ? { ...note, [field]: value } : note
-			)
+		setNotes(prev =>
+			prev.map(note => (note.id === id ? { ...note, [field]: value } : note))
 		);
 	};
 
@@ -195,7 +183,7 @@ const NotesPage = () => {
 					}`}
 					onClick={() => setSelectedCategory(null)}
 				>
-					Todas
+					All
 				</div>
 				{allCategories.map(category => (
 					<div
@@ -272,7 +260,7 @@ const NotesPage = () => {
 										className="delete-btn"
 										onClick={() => handleDelete(note.id)}
 									>
-										<i className="bi bi-trash"></i>
+										🗑️
 									</button>
 								</div>
 							</div>
@@ -286,17 +274,15 @@ const NotesPage = () => {
 
 							<div className="note-categories">
 								{categories[note.id]?.map(cat => (
-									<div key={cat.id} className="category-badge-container">
-										<span className="category-badge">
-											{cat.name}
-											<button
-												className="remove-category-btn"
-												onClick={() => handleRemoveCategory(note.id, cat.id)}
-											>
-												×
-											</button>
-										</span>
-									</div>
+									<span key={cat.id} className="category-badge">
+										{cat.name}
+										<button
+											className="remove-category-btn"
+											onClick={() => handleRemoveCategory(note.id, cat.id)}
+										>
+											×
+										</button>
+									</span>
 								))}
 								<button
 									className="add-category-btn"
@@ -315,19 +301,19 @@ const NotesPage = () => {
 					<div className="empty-state">
 						<p>
 							{selectedCategory
-								? `This category has no notes`
-								: `You don't have any notes`}
+								? "This category has no notes"
+								: "You don't have any notes"}
 						</p>
-						<small>
-							{!selectedCategory && "Use button '+' to create a new note"}
-						</small>
+						{!selectedCategory && (
+							<small>Use the “+” button to create one</small>
+						)}
 					</div>
 				)}
 			</div>
 
-			<div className="create-note-button" onClick={handleCreateNote}>
+			<button className="create-note-button" onClick={handleCreateNote}>
 				+
-			</div>
+			</button>
 		</div>
 	);
 };
