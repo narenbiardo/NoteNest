@@ -1,0 +1,99 @@
+.App {
+	text-align: center;
+}
+
+.App-logo {
+	height: 40vmin;
+	pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.App-logo {
+		animation: App-logo-spin infinite 20s linear;
+	}
+}
+
+.App-header {
+	background-color: #282c34;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(10px + 2vmin);
+	color: white;
+}
+
+.App-link {
+	color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.note-card {
+	cursor: move;
+	transition: box-shadow 0.3s;
+}
+
+.note-card:hover {
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.note-header {
+	cursor: move;
+	background: #f8f9fa;
+	border-bottom: 1px solid #dee2e6;
+}
+
+.floating-button {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	width: 3.5rem;
+	height: 3.5rem;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.floating-button:hover {
+	transform: scale(1.1);
+	transition: transform 0.2s;
+}
+
+.category-badge {
+	position: relative;
+	cursor: help;
+}
+
+.category-badge:hover::after {
+	content: attr(data-description);
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: #333;
+	color: white;
+	padding: 5px 10px;
+	border-radius: 4px;
+	font-size: 0.9rem;
+	white-space: nowrap;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+}
+
+.category-badge:hover::before {
+	content: "";
+	position: absolute;
+	bottom: calc(100% - 5px);
+	left: 50%;
+	transform: translateX(-50%);
+	border-width: 5px;
+	border-style: solid;
+	border-color: #333 transparent transparent transparent;
+}
