@@ -10,7 +10,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 1) Servicios MVC / Swagger / DbContext / DI
+// MVC / Swagger / DbContext / DI
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,7 +23,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-// 2) Autenticación JWT
+// JWT auth
 var key = builder.Configuration["Jwt:Key"];
 var issuer = builder.Configuration["Jwt:Issuer"];
 var audience = builder.Configuration["Jwt:Audience"];
@@ -46,7 +46,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 3) CORS — una sola política y la registramos
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("AllowFrontend", policy =>
@@ -57,12 +56,10 @@ builder.Services.AddCors(opt =>
     });
 });
 
-// 4) Registrar IHttpContextAccessor para que pueda inyectarlo NoteService, CategoryService, UserService
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddAuthorization();
 
-// 5) Swagger JWT UI
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
