@@ -126,16 +126,42 @@ From there, you can click the "Create Account" button to register your own user 
 
 ### API Endpoints
 
-Method Endpoint Description
-POST /api/auth/login User login, returns JWT
-POST /api/auth/register Register a new user
-GET /api/notes Get active notes
-GET /api/notes/archived Get archived notes
-POST /api/notes Create a new note
-PUT /api/notes/{id} Update a note
-DELETE /api/notes/{id} Delete a note
-POST /api/notes/{id}/archive Archive/unarchive a note
-GET /api/categories Get list of all categories
-POST /api/categories Create a new category
+**Method Endpoint Description**
+
+**User Endpoints**
+
+**POST** user/login User login, returns JWT
+
+**POST** /user/notes Register a new user
+
+**GET** /api/notes Get all User's notes
+
+**GET** /api/categories Get all User's categories
+
+**Note Endpoints**
+
+**POST** /note/{noteId} Create a new Note
+
+**PUT** /note/{noteId} Update a Note
+
+**DELETE** /note/{noteId} Delete a Note
+
+**GET** /note/active Get all User's archived Note
+
+**GET** /note/archived Get all User's archived Note
+
+**POST** /note/{noteId}/archive archive a Note
+
+**POST** /note/{noteId}/unarchive unarchive a Note
+
+**Category Endpoints**
+
+**POST** /category/{categoryId} Create a new Category
+
+**PUT** /category/{categoryId} Update a Category
+
+**DELETE** /category/{categoryId} Delete a Category
+
+**GET** /category/{categoryId}/notes Get all Category's Notes
 
 Swagger UI available at: <http://localhost:5000/swagger/index.html>
