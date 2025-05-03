@@ -55,8 +55,8 @@ To run this project locally, make sure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/ensolvers-notes.git
-cd ensolvers-notes
+git clone https://github.com/narenbiardo/NoteNest
+cd NoteNest
 ```
 
 ### 2. Configure the Backend
