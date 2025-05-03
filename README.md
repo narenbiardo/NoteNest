@@ -1,9 +1,9 @@
-# Ensolvers Notes App – Full-Stack Technical Challenge
+# NoteNest
 
 A full-stack application for managing personal notes with user authentication, archiving functionality, and note categorization.  
-Built using **ASP.NET Core 8 Web API** + **React 19.1.0**, with **Entity Framework Core 9.0.4** and **SQL Server LocalDB**.
+Built using **ASP.NET Core Web API** + **React**, with **Entity Framework Core** and **SQL Server Express LocalDB**.
 
-> **Note:** When launching the React app at `http://localhost:3000/`, you can click the **"Create Account"** button to register your own user account and start managing notes.
+> **Note:** When launching the React app at `http://localhost:3000/`, you can click on **"Create Account"** to register your own user account and start managing notes.
 
 ---
 
@@ -20,17 +20,16 @@ Built using **ASP.NET Core 8 Web API** + **React 19.1.0**, with **Entity Framewo
 
 ## Technologies Used
 
-| Technology       | Version    |
-| ---------------- | ---------- |
-| .NET SDK         | 8.0        |
-| Entity Framework | Core 9.0.4 |
-| ASP.NET Core     | Web API    |
-| SQL Server       | LocalDB    |
-| React            | 19.1.0     |
-| Node.js          | 18.x LTS   |
-| React Bootstrap  | 2.10.9     |
-| Axios            | 1.9.0      |
-| React Router     | 7.5.3      |
+| Technology                 | Version     |
+| -------------------------- | ----------- |
+| .NET SDK                   | 8.0         |
+| Entity Framework Core      | 9.0.4       |
+| ASP.NET Core               | 8.0.16      |
+| SQL Server Express LocalDB | 2019        |
+| React                      | 19.1.0      |
+| Node.js                    | 22.15.0 LTS |
+| Axios                      | 1.9.0       |
+| React Router               | 7.5.3       |
 
 ---
 
@@ -38,9 +37,9 @@ Built using **ASP.NET Core 8 Web API** + **React 19.1.0**, with **Entity Framewo
 
 To run this project locally, make sure you have the following installed:
 
-- [.NET SDK 8.0](https://dotnet.microsoft.com/en-us/download)
-- [Node.js 18.x](https://nodejs.org/)
-- [npm](https://www.npmjs.com/)
+- [.NET SDK 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [Node.js 22.x](https://nodejs.org/en/download)
+- [npm](https://www.npmjs.com/package/download)
 - [SQL Server Express LocalDB](https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb)
 
 ---
@@ -104,7 +103,7 @@ Step 1: Start the Backend
 
 ```bash
 cd backend
-dotnet ef database update # Apply migrations if not done yet
+dotnet ef database update
 dotnet run
 ```
 
@@ -115,7 +114,7 @@ Open a new terminal:
 
 ```bash
 cd frontend
-npm install # Only required the first time
+npm install
 npm start
 ```
 
@@ -126,42 +125,26 @@ From there, you can click the "Create Account" button to register your own user 
 
 ### API Endpoints
 
-**Method Endpoint Description**
+| Method                                                                 | Endpoint                               | Description                   |
+| :--------------------------------------------------------------------- | :------------------------------------- | :---------------------------- |
+| ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/user/login`                          | User login, returns JWT       |
+| ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/user/register`                       | Register a new user           |
+| ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/user/notes`                          | Get all user’s notes          |
+| ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/note/{noteId}`                       | Get a note                    |
+| ![PUT](https://img.shields.io/badge/PUT-yellow?style=for-the-badge)    | `/note/{noteId}`                       | Update a note                 |
+| ![DELETE](https://img.shields.io/badge/DELETE-red?style=for-the-badge) | `/note/{noteId}`                       | Delete a note                 |
+| ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/note/`                               | Create a new note             |
+| ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/note/active`                         | Get all active user's notes   |
+| ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/note/archived`                       | Get all archived user's notes |
+| ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/note/{noteId}/archive`               | Archive a note                |
+| ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/note/{noteId}/unarchive`             | Unarchive a note              |
+| ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/note/{noteId}/categories`            | Get categories from a note    |
+| ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/note/{noteId}/category/{categoryId}` | Add a category to a note      |
+| ![DELETE](https://img.shields.io/badge/DELETE-red?style=for-the-badge) | `/note/{noteId}`                       | Remove a category from a note |
+| ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/category/{categoryId}`               | Get a category                |
+| ![PUT](https://img.shields.io/badge/PUT-yellow?style=for-the-badge)    | `/category/{categoryId}`               | Update a category             |
+| ![DELETE](https://img.shields.io/badge/DELETE-red?style=for-the-badge) | `/category/{categoryId}`               | Delete a category             |
+| ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/category`                            | Create a new category         |
+| ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/note/{noteId}/categories`            | Get notes from a category     |
 
-**User Endpoints**
-
-**POST** user/login User login, returns JWT
-
-**POST** /user/notes Register a new user
-
-**GET** /api/notes Get all User's notes
-
-**GET** /api/categories Get all User's categories
-
-**Note Endpoints**
-
-**POST** /note/{noteId} Create a new Note
-
-**PUT** /note/{noteId} Update a Note
-
-**DELETE** /note/{noteId} Delete a Note
-
-**GET** /note/active Get all User's archived Note
-
-**GET** /note/archived Get all User's archived Note
-
-**POST** /note/{noteId}/archive archive a Note
-
-**POST** /note/{noteId}/unarchive unarchive a Note
-
-**Category Endpoints**
-
-**POST** /category/{categoryId} Create a new Category
-
-**PUT** /category/{categoryId} Update a Category
-
-**DELETE** /category/{categoryId} Delete a Category
-
-**GET** /category/{categoryId}/notes Get all Category's Notes
-
-Swagger UI available at: <http://localhost:5000/swagger/index.html>
+Swagger UI available at: [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)

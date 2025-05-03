@@ -1,5 +1,5 @@
 {
-	"name": "notes-app",
+	"name": "note-nest",
 	"version": "0.1.0",
 	"private": true,
 	"proxy": "http://localhost:5000",
@@ -12,7 +12,6 @@
 		"bootstrap-icons": "^1.11.3",
 		"notes-app": "file:",
 		"react": "^19.1.0",
-		"react-bootstrap": "^2.10.9",
 		"react-dom": "^19.1.0",
 		"react-draggable": "^4.4.6",
 		"react-router-dom": "^7.5.3",
