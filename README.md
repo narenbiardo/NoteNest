@@ -55,8 +55,8 @@ To run this project locally, make sure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/narenbiardo/NoteNest
-cd NoteNest
+git clone https://github.com/narenbiardo/notenest
+cd notenest
 ```
 
 ### 2. Configure the Backend
