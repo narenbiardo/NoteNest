@@ -1,9 +1,15 @@
 # NoteNest
 
-A full-stack application for managing personal notes with user authentication, archiving functionality, and note categorization.  
-Built using **ASP.NET Core Web API** + **React**, with **Entity Framework Core** and **SQL Server Express LocalDB**.
+A full-stack application for managing personal notes with user authentication, archiving functionality, and note categorization.
 
-> **Note:** When launching the React app at `http://localhost:3000/`, you can click on **"Create Account"** to register your own user account and start managing notes.
+Stack:
+
+![ASP.NET Core Web API](https://img.shields.io/badge/ASP.NET_Core_Web_API-purple)
+![React](https://img.shields.io/badge/React-skyblue)
+![Entity Framework Core](https://img.shields.io/badge/Entity_Framework_Core-violet)
+![SQL Server Express LocalDB](https://img.shields.io/badge/SQL_Server_Express_LocalDB-red)
+
+> When launching the React app at <http://localhost:3000> you can click on **"Create Account"** to register your own user account and start managing notes.
 
 ---
 
@@ -86,19 +92,23 @@ dotnet ef database update
 
 ### How to Run the Application
 
-Automatic Method (with script)
+## Automatic Method
 
-A simple bash script run.sh is provided for convenience. It:
--Applies EF migrations
--Starts the backend server
--Starts the frontend React app
+A simple bash script **run.sh** is provided for convenience, it Applies:
+
+- EF migrations
+
+- Starts the backend server
+
+- Starts the frontend React app
 
 ```bash
 chmod +x run.sh
 ./run.sh
 ```
 
-Manual Method
+## Manual Method
+
 Step 1: Start the Backend
 
 ```bash
@@ -108,9 +118,8 @@ dotnet run
 ```
 
 This will start the ASP.NET Web API at <http://localhost:5000>
-Step 2: Start the Frontend
 
-Open a new terminal:
+Step 2: Start the Frontend
 
 ```bash
 cd frontend
@@ -119,9 +128,6 @@ npm start
 ```
 
 This will launch the React development server at <http://localhost:3000>
-
-Now visit <http://localhost:3000/> in your browser.
-From there, you can click the "Create Account" button to register your own user and start using the app.
 
 ### API Endpoints
 
@@ -147,4 +153,4 @@ From there, you can click the "Create Account" button to register your own user 
 | ![POST](https://img.shields.io/badge/POST-blue?style=for-the-badge)    | `/category`                            | Create a new category         |
 | ![GET](https://img.shields.io/badge/GET-green?style=for-the-badge)     | `/note/{noteId}/categories`            | Get notes from a category     |
 
-Swagger UI available at: [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
+Swagger UI [http://localhost:5000/swagger/index.html](http://localhost:5000/swagger/index.html)
