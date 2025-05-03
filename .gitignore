@@ -1,6 +1,7 @@
 #.NET
 backend/bin/
 backend/obj/
+backend/publish/
 backend/.vs/
 
 #Node
